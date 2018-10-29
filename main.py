@@ -1,22 +1,19 @@
 from model import *
 from data import *
 
-#os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-
-
-data_gen_args = dict(rotation_range=0.2,
-                    width_shift_range=0.05,
-                    height_shift_range=0.05,
-                    shear_range=0.05,
-                    zoom_range=0.05,
-                    horizontal_flip=True,
-                    fill_mode='nearest')
-myGene = trainGenerator(2,'data/membrane/train','image','label',data_gen_args,save_to_dir = None)
-
+x_tr, y_tr, x_te, y_te = load_fetal_data()
 model = unet()
-model_checkpoint = ModelCheckpoint('unet_membrane.hdf5', monitor='loss',verbose=1, save_best_only=True)
-model.fit_generator(myGene,steps_per_epoch=300,epochs=1,callbacks=[model_checkpoint])
+model_checkpoint = ModelCheckpoint('unet.hdf5', monitor='loss', verbose=1, save_best_only=True)
 
-testGene = testGenerator("data/membrane/test")
-results = model.predict_generator(testGene,30,verbose=1)
-saveResult("data/membrane/test",results)
+model.fit(x_tr, y_tr, batch_size=4, epochs=20, verbose=1, shuffle=True, callbacks=[model_checkpoint], validation_data=(x_te, y_te))
+model.save('model_20ep.h5')
+
+"""
+model.fit(x_tr, y_tr, batch_size=8, epochs=10, verbose=1, shuffle=True, callbacks=[model_checkpoint], validation_data=(x_te, y_te))
+model.save('model_10ep.h5')
+"""
+for i in range(4):
+    model = load_model('model_'+str(20*(i+1))+'ep.h5', custom_objects={'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
+    model.fit(x_tr, y_tr, batch_size=4, epochs=20, verbose=1, shuffle=True, callbacks=[model_checkpoint], validation_data=(x_te, y_te))
+    model.save('model_'+str(20*(i+2))+'ep.h5')
+
