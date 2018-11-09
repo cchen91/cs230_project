@@ -1,14 +1,22 @@
-from model import *
+from model13 import *
 from data import *
 
-x_tr, y_tr, x_te, y_te = load_fetal_data()
-model = unet()
-model = load_model('model_100ep.h5', custom_objects={'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
+os.environ["CUDA_VISIBLE_DEVICES"]="3"
 
-yhat_tr = model.predict(x_tr, verbose=1)
+nbatch = 8
+
+x_tr = np.load(data_path+'x_tr.npy')
+y_tr = np.load(data_path+'y_tr.npy')
+x_te = np.load(data_path+'x_dev.npy')
+y_te = np.load(data_path+'y_dev.npy')
+
+model = unet()
+model = load_model('model_180ep.h5', custom_objects={'dice_coef_loss': dice_coef_loss, 'dice_coef': dice_coef})
+
+yhat_tr = model.predict(x_tr, batch_size = nbatch, verbose=1)
 yhat_tr = np.floor(yhat_tr+0.5)
 np.save(data_path+'yhat_tr.npy', yhat_tr)
-yhat_te = model.predict(x_te, verbose=1)
+yhat_te = model.predict(x_te, batch_size = nbatch, verbose=1)
 yhat_te = np.floor(yhat_te+0.5)
 np.save(data_path+'yhat_te.npy', yhat_te)
 

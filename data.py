@@ -10,8 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.font_manager import FontProperties
 
-rawdata_path = '/home/ky_fetal/cs230/2d/'
-data_path = '/home/ky_fetal/cs230_data/'
+data_path = '/data2/yeom/ky_fetal/cs230_data/train/ax/'
 image_path = data_path+'images/'
 
 nh = 512
@@ -21,12 +20,12 @@ ratio_tr = 0.8
 
 def create_train_data():
     
-    x1 = np.load(rawdata_path+"x_ax_2d.npy")
-    y1 = np.load(rawdata_path+"y_ax_2d.npy")
-    x2 = np.load(rawdata_path+"x_cor_2d.npy")
-    y2 = np.load(rawdata_path+"y_cor_2d.npy")
-    x3 = np.load(rawdata_path+"x_sag_2d.npy")
-    y3 = np.load(rawdata_path+"y_sag_2d.npy")
+    x1 = np.load(data_path+"x_ax_2d.npy")
+    y1 = np.load(data_path+"y_ax_2d.npy")
+    x2 = np.load(data_path+"x_cor_2d.npy")
+    y2 = np.load(data_path+"y_cor_2d.npy")
+    x3 = np.load(data_path+"x_sag_2d.npy")
+    y3 = np.load(data_path+"y_sag_2d.npy")
 
     nm1 = x1.shape[0]
     nm2 = x2.shape[0]
@@ -84,7 +83,8 @@ def create_train_data():
     np.save(data_path+'x_te.npy', x_te)
     np.save(data_path+'y_te.npy', y_te)
     np.save(data_path+'z_te.npy', z_te)
-
+    
+    """
     for i in range(nmtr):
         mpl.image.imsave(image_path+"train/x_"+str(i+1)+".png", x_tr[i, ..., 0], cmap = 'gray')
         mpl.image.imsave(image_path+"train/y_"+str(i+1)+".png", y_tr[i, ..., 0], cmap = 'gray')
@@ -93,7 +93,7 @@ def create_train_data():
         mpl.image.imsave(image_path+"test/x_"+str(i+1)+".png", x_te[i, ..., 0], cmap = 'gray')
         mpl.image.imsave(image_path+"test/y_"+str(i+1)+".png", y_te[i, ..., 0], cmap = 'gray')
         mpl.image.imsave(image_path+"test/z_"+str(i+1)+".png", z_te[i, ...])
-
+    """
     print('Saving to .npy files done.')
 
 def load_fetal_data():
